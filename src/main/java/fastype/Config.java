@@ -58,6 +58,11 @@ public class Config {
                 normalizedUrl = normalizedUrl.replaceAll("/$", "");
 
                 int blogId = getBlogId(normalizedUrl);
+
+                if (blogId == -1) {
+                    return;
+                }
+
                 config.put("blogId", String.valueOf(blogId));
                 config.put("blogUrl", normalizedUrl);
             } else {
@@ -69,10 +74,17 @@ public class Config {
     }
 
     private static int getBlogId(String blogUrl) throws IOException {
-        Document doc = Jsoup.connect(blogUrl).get();
-        Element body = doc.select("body").first();
-        String blogId = body.attr("data-blog-id");
-        return Integer.parseInt(blogId);
+        try {
+            Document doc = Jsoup.connect(blogUrl).get();
+            Element body = doc.select("body").first();
+            String blogId = body.attr("data-blog-id");
+            return Integer.parseInt(blogId);
+        } catch (UnknownHostException unknownHostException) {
+            log.debug("url {} contains invalid hostname", blogUrl);
+        } catch (HttpStatusException httpStatusException) {
+            log.debug("url {} doesn't exists", blogUrl);
+        }
+        return -1;
     }
 }
 
