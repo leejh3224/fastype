@@ -27,6 +27,7 @@ public class Config {
     public static void write() {
         try {
             Files.createDirectories(configDir);
+            load();
             yamlMapper.writeValue(configFile, config);
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,6 +44,7 @@ public class Config {
     }
 
     public static String get(String key) {
+        load();
         return config.get(key);
     }
 
