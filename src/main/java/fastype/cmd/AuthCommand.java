@@ -19,7 +19,7 @@ public class AuthCommand implements Callable<Integer> {
     String token;
 
     @Override
-    public Integer call() {
+    public Integer call() throws Exception {
         if (interactive) {
             log.debug("chrome browser will be open in a moment...");
             Auth auth = Auth.getInstance();
@@ -30,6 +30,7 @@ public class AuthCommand implements Callable<Integer> {
                 return 2;
             }
             Config.set("token", token);
+            log.debug("Auth token successfully set");
         }
         Config.write();
         return 0;
