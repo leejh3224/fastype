@@ -17,13 +17,19 @@ public class Auth {
     private static Auth auth;
     private static WebDriver driver;
 
-    private Auth() {
-        Path chromeDriverPath = Paths.get(System.getProperty("user.home"), "Dropbox/chromedriver");
+    private Auth() throws Exception {
+        String webdriverPath = Config.get("webdriverPath");
+
+        if (webdriverPath == null) {
+            log.debug("You need to set `webdriverPath` using `fastype config --key webdriverPath --value /path/to/webdriver/executable`");
+            throw new Exception("Missing Config");
+        }
+        Path chromeDriverPath = Paths.get(webdriverPath);
         System.setProperty("webdriver.chrome.driver", chromeDriverPath.normalize().toString());
         driver = new ChromeDriver();
     }
 
-    public static Auth getInstance() {
+    public static Auth getInstance() throws Exception {
         if (auth == null) {
             synchronized (Auth.class) {
                 if (auth == null) {
