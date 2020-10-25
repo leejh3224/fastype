@@ -18,12 +18,14 @@ public class ConfigCommand implements Callable<Integer> {
     String value;
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() {
         if (key.isEmpty() || value.isEmpty()) {
             log.debug("`key` and `value` must not be empty");
             return 2;
         }
         Config.set(key, value);
+        Config.write();
+        log.debug("key of {} successfully set", key);
         return 0;
     }
 }
