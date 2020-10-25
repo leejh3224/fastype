@@ -3,6 +3,7 @@ package fastype;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,6 +11,7 @@ import org.jsoup.nodes.Element;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -21,7 +23,6 @@ public class Config {
     private static final File configFile = new File(configDir.normalize().toString() + "/config.yaml");
     private static Map<String, String> config = new HashMap<>();
     private static final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
-    private static final ObjectMapper mapMapper = new ObjectMapper();
 
     public static void write() {
         try {
@@ -35,7 +36,7 @@ public class Config {
     public static void load() {
         try {
             Map content = yamlMapper.readValue(configFile, Map.class);
-            config.putAll(content);
+            ((Map<String, String>) content).forEach(config::putIfAbsent);
         } catch (Exception e) {
             e.printStackTrace();
         }
